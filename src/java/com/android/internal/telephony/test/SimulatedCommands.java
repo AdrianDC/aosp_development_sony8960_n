@@ -2101,4 +2101,6 @@ public class SimulatedCommands extends BaseCommands
     @Override
     public void unregisterForPcoData(Handler h) {
     }
+
+    public boolean needsOldRilFeature(String feature) { return false; }
 }

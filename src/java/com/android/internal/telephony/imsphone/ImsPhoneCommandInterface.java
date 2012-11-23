@@ -635,4 +635,6 @@ class ImsPhoneCommandInterface extends BaseCommands implements CommandsInterface
     @Override
     public void getAllowedCarriers(Message result) {
     }
+
+    public boolean needsOldRilFeature(String feature) { return false; }
 }

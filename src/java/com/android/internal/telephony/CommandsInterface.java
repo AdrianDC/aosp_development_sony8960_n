@@ -2052,4 +2052,10 @@ public interface CommandsInterface {
      * @param h handler to be removed
      */
     public void unregisterForPcoData(Handler h);
+
+    /**
+     * @hide
+     * CM-specific: Ask the RIL about the presence of back-compat flags
+     */
+    public boolean needsOldRilFeature(String feature);
 }
