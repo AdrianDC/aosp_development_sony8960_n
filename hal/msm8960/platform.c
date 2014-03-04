@@ -225,6 +225,9 @@ static const char * const device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_OUT_SPEAKER_PROTECTED] = "speaker-protected",
     [SND_DEVICE_OUT_VOICE_SPEAKER_PROTECTED] = "voice-speaker-protected",
     [SND_DEVICE_OUT_VOICE_SPEAKER_HFP] = "voice-speaker-hfp",
+    [SND_DEVICE_OUT_VOIP_HANDSET] = "voip-handset-comm",
+    [SND_DEVICE_OUT_VOIP_SPEAKER] = "voip-speaker-comm",
+    [SND_DEVICE_OUT_VOIP_HEADPHONES] = "voip-headset-comm",
 
     /* Capture sound devices */
     [SND_DEVICE_IN_HANDSET_MIC] = "handset-mic",
@@ -263,6 +266,7 @@ static const char * const device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_IN_VOICE_SPEAKER_DMIC] = "voice-speaker-dmic-ef",
     [SND_DEVICE_IN_VOICE_SPEAKER_MIC_HFP] = "voice-speaker-mic-hfp",
     [SND_DEVICE_IN_VOICE_HEADSET_MIC] = "voice-headset-mic",
+    [SND_DEVICE_IN_VOIP_HEADSET_MIC] = "voip-headset-mic-comm",
     [SND_DEVICE_IN_VOICE_TTY_FULL_HEADSET_MIC] = "voice-tty-full-headset-mic",
     [SND_DEVICE_IN_VOICE_TTY_VCO_HANDSET_MIC] = "voice-tty-vco-handset-mic",
     [SND_DEVICE_IN_VOICE_TTY_HCO_HEADSET_MIC] = "voice-tty-hco-headset-mic",
@@ -306,9 +310,12 @@ static int acdb_device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_OUT_SPEAKER_AND_LINE] = 77,
     [SND_DEVICE_OUT_SPEAKER_SAFE_AND_LINE] = 77,
     [SND_DEVICE_OUT_VOICE_HANDSET] = ACDB_ID_VOICE_HANDSET,
+    [SND_DEVICE_OUT_VOIP_HANDSET] = ACDB_ID_VOICE_HANDSET,
     [SND_DEVICE_OUT_VOICE_SPEAKER] = ACDB_ID_VOICE_SPEAKER,
+    [SND_DEVICE_OUT_VOIP_SPEAKER] = ACDB_ID_VOICE_SPEAKER,
     [SND_DEVICE_OUT_VOICE_HAC_HANDSET] = 53,
     [SND_DEVICE_OUT_VOICE_HEADPHONES] = 10,
+    [SND_DEVICE_OUT_VOIP_HEADPHONES] = 10,
     [SND_DEVICE_OUT_VOICE_LINE] = 77,
     [SND_DEVICE_OUT_HDMI] = 18,
     [SND_DEVICE_OUT_SPEAKER_AND_HDMI] = 15,
@@ -359,6 +366,7 @@ static int acdb_device_table[SND_DEVICE_MAX] = {
     [SND_DEVICE_IN_VOICE_SPEAKER_MIC_HFP] = 11,
     [SND_DEVICE_IN_VOICE_SPEAKER_DMIC] = 43,
     [SND_DEVICE_IN_VOICE_HEADSET_MIC] = ACDB_ID_HEADSET_MIC_AEC,
+    [SND_DEVICE_IN_VOIP_HEADSET_MIC] = 8,
     [SND_DEVICE_IN_VOICE_TTY_FULL_HEADSET_MIC] = 16,
     [SND_DEVICE_IN_VOICE_TTY_VCO_HANDSET_MIC] = 36,
     [SND_DEVICE_IN_VOICE_TTY_HCO_HEADSET_MIC] = 16,
@@ -422,6 +430,9 @@ static const struct name_to_index snd_device_name_index[SND_DEVICE_MAX] = {
     {TO_NAME_INDEX(SND_DEVICE_OUT_VOICE_TTY_FULL_HEADPHONES)},
     {TO_NAME_INDEX(SND_DEVICE_OUT_VOICE_TTY_VCO_HEADPHONES)},
     {TO_NAME_INDEX(SND_DEVICE_OUT_VOICE_TTY_HCO_HANDSET)},
+    {TO_NAME_INDEX(SND_DEVICE_OUT_VOIP_HANDSET)},
+    {TO_NAME_INDEX(SND_DEVICE_OUT_VOIP_SPEAKER)},
+    {TO_NAME_INDEX(SND_DEVICE_OUT_VOIP_HEADPHONES)},
 
     /* in */
     {TO_NAME_INDEX(SND_DEVICE_OUT_SPEAKER_PROTECTED)},
@@ -462,6 +473,7 @@ static const struct name_to_index snd_device_name_index[SND_DEVICE_MAX] = {
     {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_SPEAKER_MIC_HFP)},
     {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_SPEAKER_DMIC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_HEADSET_MIC)},
+    {TO_NAME_INDEX(SND_DEVICE_IN_VOIP_HEADSET_MIC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_TTY_FULL_HEADSET_MIC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_TTY_VCO_HANDSET_MIC)},
     {TO_NAME_INDEX(SND_DEVICE_IN_VOICE_TTY_HCO_HEADSET_MIC)},
@@ -1957,8 +1969,13 @@ snd_device_t platform_get_output_snd_device(void *platform, audio_devices_t devi
                 if (devices & AUDIO_DEVICE_OUT_LINE)
                     snd_device = SND_DEVICE_OUT_VOICE_LINE;
                 else
+                if (mode == AUDIO_MODE_IN_COMMUNICATION &&
+                    audio_extn_dedicated_voip_device_prop_check()) {
+                    snd_device = SND_DEVICE_OUT_VOIP_HEADPHONES;
+                } else {
                     snd_device = SND_DEVICE_OUT_VOICE_HEADPHONES;
                 }
+            }
         } else if (devices & AUDIO_DEVICE_OUT_ALL_SCO) {
             if (adev->bt_wb_speech_enabled) {
                 snd_device = SND_DEVICE_OUT_BT_SCO_WB;
@@ -1967,7 +1984,12 @@ snd_device_t platform_get_output_snd_device(void *platform, audio_devices_t devi
             }
         } else if (devices & (AUDIO_DEVICE_OUT_SPEAKER | AUDIO_DEVICE_OUT_SPEAKER_SAFE)) {
             if (!adev->enable_hfp) {
+            if (mode == AUDIO_MODE_IN_COMMUNICATION &&
+                    audio_extn_dedicated_voip_device_prop_check()) {
+                snd_device = SND_DEVICE_OUT_VOIP_SPEAKER;
+            } else {
                 snd_device = SND_DEVICE_OUT_VOICE_SPEAKER;
+            }
             } else {
                 snd_device = SND_DEVICE_OUT_VOICE_SPEAKER_HFP;
             }
@@ -1976,6 +1998,9 @@ snd_device_t platform_get_output_snd_device(void *platform, audio_devices_t devi
                 snd_device = SND_DEVICE_OUT_VOICE_HAC_HANDSET;
             else if (is_operator_tmus())
                 snd_device = SND_DEVICE_OUT_VOICE_HANDSET_TMUS;
+            else if (mode == AUDIO_MODE_IN_COMMUNICATION &&
+                    audio_extn_dedicated_voip_device_prop_check())
+                snd_device = SND_DEVICE_OUT_VOIP_HANDSET;
             else
                 snd_device = SND_DEVICE_OUT_VOICE_HANDSET;
         } else if (devices & AUDIO_DEVICE_OUT_TELEPHONY_TX)
@@ -2203,6 +2228,9 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                         snd_device = SND_DEVICE_IN_HANDSET_MIC_AEC_NS;
                     }
                 } else if (in_device & AUDIO_DEVICE_IN_WIRED_HEADSET) {
+                  if (audio_extn_dedicated_voip_device_prop_check())
+                    snd_device = SND_DEVICE_IN_VOIP_HEADSET_MIC;
+                  else
                     snd_device = SND_DEVICE_IN_HEADSET_MIC_AEC;
                 }
                 platform_set_echo_reference(adev, true, out_device);
@@ -2223,7 +2251,10 @@ snd_device_t platform_get_input_snd_device(void *platform, audio_devices_t out_d
                         snd_device = SND_DEVICE_IN_HANDSET_MIC_AEC;
                     }
                } else if (in_device & AUDIO_DEVICE_IN_WIRED_HEADSET) {
-                   snd_device = SND_DEVICE_IN_HEADSET_MIC_AEC;
+                  if (audio_extn_dedicated_voip_device_prop_check())
+                    snd_device = SND_DEVICE_IN_VOIP_HEADSET_MIC;
+                  else
+                    snd_device = SND_DEVICE_IN_HEADSET_MIC_AEC;
                }
                platform_set_echo_reference(adev, true, out_device);
             } else if (adev->active_input->enable_ns) {
