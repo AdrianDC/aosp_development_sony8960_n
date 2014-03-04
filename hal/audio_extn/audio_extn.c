@@ -86,6 +86,21 @@ on_error:
         free(snd_card_name);
 }
 
+
+bool audio_extn_dedicated_voip_device_prop_check()
+{
+    char prop_value[PROPERTY_VALUE_MAX] = {0};
+
+    property_get("use.dedicated.device.for.voip", prop_value, "0");
+    if (!strncmp("true", prop_value, sizeof("true")))
+    {
+        ALOGD("%s: Using dedicated path for VoIP", __func__);
+        return true;
+    }
+    else
+        return false;
+}
+
 #ifdef KPI_OPTIMIZE_ENABLED
 typedef int (*perf_lock_acquire_t)(int, int, int*, int);
 typedef int (*perf_lock_release_t)(int);
