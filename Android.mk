@@ -26,6 +26,7 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src/java) \
 	$(call all-proto-files-under, proto)
 
 LOCAL_JAVA_LIBRARIES := voip-common ims-common
+LOCAL_REQUIRED_MODULES := telresources
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := telephony-common
 LOCAL_PROTOC_OPTIMIZE_TYPE := nano
