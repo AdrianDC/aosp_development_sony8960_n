@@ -197,6 +197,11 @@ allow appdomain vfat:file rw_file_perms;
 allow appdomain sdcard_posix:dir r_dir_perms;
 allow appdomain sdcard_posix:file rw_file_perms;
 
+# Access OBBs (sdcard_posix) mounted by vold
+# File write access allowed for FDs returned through Storage Access Framework
+allow appdomain sdcard_posix:dir r_dir_perms;
+allow appdomain sdcard_posix:file rw_file_perms;
+
 # Allow apps to use the USB Accessory interface.
 # http://developer.android.com/guide/topics/connectivity/usb/accessory.html
 #
