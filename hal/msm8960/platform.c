@@ -1765,18 +1765,13 @@ int platform_set_voice_volume(void *platform, int volume)
     struct platform_data *my_data = (struct platform_data *)platform;
     struct audio_device *adev = my_data->adev;
     struct mixer_ctl *ctl;
-    //const char *mixer_ctl_name = "Voice Rx Gain";
     const char *mixer_ctl_name = "Voice Rx Volume";
     int vol_index = 0, ret = 0;
-    uint32_t set_values[ ] = {0,
-                              ALL_SESSION_VSID,
-                              DEFAULT_VOLUME_RAMP_DURATION_MS};
 
     // Voice volume levels are mapped to adsp volume levels as follows.
     // 100 -> 5, 80 -> 4, 60 -> 3, 40 -> 2, 20 -> 1  0 -> 0
     // But this values don't changed in kernel. So, below change is need.
     vol_index = (int)percent_to_index(volume, MIN_VOL_INDEX, my_data->max_vol_index);
-    set_values[0] = vol_index;
 
     ctl = mixer_get_ctl_by_name(adev->mixer, mixer_ctl_name);
     if (!ctl) {
@@ -1784,8 +1779,6 @@ int platform_set_voice_volume(void *platform, int volume)
               __func__, mixer_ctl_name);
         return -EINVAL;
     }
-    //ALOGV("Setting voice volume index: %d", set_values[0]);
-    //mixer_ctl_set_array(ctl, set_values, ARRAY_SIZE(set_values));
     ALOGV("Setting voice volume index: %d", vol_index);
     mixer_ctl_set_value(ctl, 0, vol_index);
 
@@ -1806,9 +1799,6 @@ int platform_set_mic_mute(void *platform, bool state)
     struct mixer_ctl *ctl;
     const char *mixer_ctl_name = "Voice Tx Mute";
     int ret = 0;
-    uint32_t set_values[ ] = {0,
-                              ALL_SESSION_VSID,
-                              DEFAULT_MUTE_RAMP_DURATION_MS};
 
     if (adev->mode != AUDIO_MODE_IN_CALL &&
         adev->mode != AUDIO_MODE_IN_COMMUNICATION)
@@ -1817,7 +1807,6 @@ int platform_set_mic_mute(void *platform, bool state)
     if (adev->enable_hfp)
         mixer_ctl_name = "HFP Tx Mute";
 
-    set_values[0] = state;
     ctl = mixer_get_ctl_by_name(adev->mixer, mixer_ctl_name);
     if (!ctl) {
         ALOGE("%s: Could not get ctl for mixer cmd - %s",
@@ -1825,16 +1814,8 @@ int platform_set_mic_mute(void *platform, bool state)
         return -EINVAL;
     }
     ALOGV("Setting voice mute state: %d", state);
-    //mixer_ctl_set_array(ctl, set_values, ARRAY_SIZE(set_values));
     mixer_ctl_set_value(ctl, 0, state);
 
-    if (my_data->csd != NULL) {
-        ret = my_data->csd->mic_mute(ALL_SESSION_VSID, state,
-                                     DEFAULT_MUTE_RAMP_DURATION_MS);
-        if (ret < 0) {
-            ALOGE("%s: csd_mic_mute error %d", __func__, ret);
-        }
-    }
     return ret;
 }
 
@@ -1845,9 +1826,7 @@ int platform_set_device_mute(void *platform, bool state, char *dir)
     struct mixer_ctl *ctl;
     char *mixer_ctl_name = NULL;
     int ret = 0;
-    uint32_t set_values[ ] = {0,
-                              ALL_SESSION_VSID,
-                              0};
+
     if(dir == NULL) {
         ALOGE("%s: Invalid direction:%s", __func__, dir);
         return -EINVAL;
@@ -1861,7 +1840,6 @@ int platform_set_device_mute(void *platform, bool state, char *dir)
         return -EINVAL;
     }
 
-    set_values[0] = state;
     ctl = mixer_get_ctl_by_name(adev->mixer, mixer_ctl_name);
     if (!ctl) {
         ALOGE("%s: Could not get ctl for mixer cmd - %s",
@@ -1871,7 +1849,6 @@ int platform_set_device_mute(void *platform, bool state, char *dir)
 
     ALOGV("%s: Setting device mute state: %d, mixer ctrl:%s",
           __func__,state, mixer_ctl_name);
-    //mixer_ctl_set_array(ctl, set_values, ARRAY_SIZE(set_values));
     mixer_ctl_set_value(ctl, 0, state);
 
     return ret;
