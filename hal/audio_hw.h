@@ -79,6 +79,7 @@ enum {
     /* Capture usecases */
     USECASE_AUDIO_RECORD,
     USECASE_AUDIO_RECORD_LOW_LATENCY,
+    USECASE_AUDIO_RECORD_FM_VIRTUAL,
 
     /* Voice extension usecases
      *
@@ -113,6 +114,9 @@ enum {
     USECASE_AUDIO_PLAYBACK_AFE_PROXY,
     USECASE_AUDIO_RECORD_AFE_PROXY,
     USECASE_AUDIO_DSM_FEEDBACK,
+
+    /* FM usecase */
+    USECASE_AUDIO_PLAYBACK_FM,
 
     AUDIO_USECASE_MAX
 };
