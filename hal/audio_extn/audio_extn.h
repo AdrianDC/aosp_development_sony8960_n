@@ -36,6 +36,13 @@ struct snd_card_split *audio_extn_get_snd_card_split();
 void audio_extn_set_snd_card_split(const char* in_snd_card_name);
 bool audio_extn_dedicated_voip_device_prop_check();
 
+#ifndef AUDIO_DEVICE_OUT_FM_TX
+#define AUDIO_DEVICE_OUT_FM_TX 0x8000000
+#endif
+
+void audio_extn_set_parameters(struct audio_device *adev,
+                               struct str_parms *parms);
+
 #ifndef SPKR_PROT_ENABLED
 #define audio_extn_spkr_prot_init(adev)       (0)
 #define audio_extn_spkr_prot_start_processing(snd_device)    (-EINVAL)

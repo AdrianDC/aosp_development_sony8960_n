@@ -197,6 +197,8 @@ const char * const use_case_table[AUDIO_USECASE_MAX] = {
 
     [USECASE_AUDIO_RECORD] = "audio-record",
     [USECASE_AUDIO_RECORD_LOW_LATENCY] = "low-latency-record",
+    [USECASE_AUDIO_RECORD_FM_VIRTUAL] = "fm-virtual-record",
+    [USECASE_AUDIO_PLAYBACK_FM] = "play-fm",
 
     [USECASE_AUDIO_HFP_SCO] = "hfp-sco",
     [USECASE_AUDIO_HFP_SCO_WB] = "hfp-sco-wb",
@@ -2054,6 +2056,12 @@ static int out_set_parameters(struct audio_stream *stream, const char *kvpairs)
 
         /*handles device and call state changes*/
         audio_extn_extspk_update(adev->extspk);
+    }
+
+    if (out == adev->primary_output) {
+        pthread_mutex_lock(&adev->lock);
+        audio_extn_set_parameters(adev, parms);
+        pthread_mutex_unlock(&adev->lock);
     }
 
     if (out->usecase == USECASE_AUDIO_PLAYBACK_OFFLOAD) {
