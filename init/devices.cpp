@@ -57,7 +57,7 @@ static const char *firmware_dirs[] = { "/etc/firmware",
 
 extern struct selabel_handle *sehandle;
 
-extern char boot_device[PROP_VALUE_MAX];
+extern std::string boot_device;
 
 static int device_fd = -1;
 
@@ -529,7 +529,7 @@ static char **get_block_device_symlinks(struct uevent *uevent)
     else
         links[link_num] = NULL;
 
-    if (pdev && boot_device[0] != '\0' && strstr(device, boot_device)) {
+    if (pdev && boot_device[0] != '\0' && strstr(device, boot_device.c_str())) {
         /* Create bootdevice symlink for platform boot stroage device */
         make_link_init(link_path, "/dev/block/bootdevice");
     }
