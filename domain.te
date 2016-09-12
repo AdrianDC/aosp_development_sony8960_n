@@ -498,6 +498,7 @@ neverallow {
   -init
   -runas
   -zygote
+  userdebug_or_eng(`-qti-testscripts')
 } shell:process { transition dyntransition };
 
 # Only domains spawned from zygote and runas may have the appdomain attribute.
