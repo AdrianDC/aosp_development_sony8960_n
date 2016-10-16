@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Project: 'https://github.com/AdrianDC/aosp_development_sony8960' -->
+<!-- Manifest: 'https://android.googlesource.com/platform/manifest/+/android-7.1.2_r36' -->
+<!-- Repo Init: 'repoinitaosp 7.1.2_r36' -->
+<!-- ROM Patcher: 'aospsony8960npatcher' -->
+<!-- ROM Rebaser: 'lineagesony8960rebaser' -->
+<!-- Untracked: 'android_development_manifests/untracked-aosp-n' -->
+<manifest>
+
+  <!-- GitHub Remotes for Projects -->
+  <remote name="github" fetch="https://github.com" revision="refs/heads/cm-14.1" />
+
+  <!-- LineageOS Dependency Projects -->
+  <project name="AdrianDC/aosp_development_msm8960" path="device/qcom/common" remote="github" revision="device_qcom_common" />
+  <project name="LineageOS/android_device_qcom_sepolicy" path="device/qcom/sepolicy" remote="github" />
+  <project name="LineageOS/android_device_sony_common" path="device/sony/common" remote="github" />
+  <project name="LineageOS/android_external_stlport" path="external/stlport" remote="github" />
+  <project name="LineageOS/android_hardware_qcom_fm" path="hardware/qcom/fm" remote="github" />
+  <project name="LineageOS/android_hardware_sony_DASH" path="hardware/sony/DASH" remote="github" />
+  <project name="LineageOS/android_hardware_sony_thermanager" path="hardware/sony/thermanager" remote="github" />
+  <project name="LineageOS/android_packages_apps_FMRadio" path="packages/apps/FMRadio" remote="github" />
+  <project name="LineageOS/android_packages_apps_Jelly" path="packages/apps/Jelly" remote="github" />
+  <project name="LineageOS/android_packages_resources_devicesettings" path="packages/resources/devicesettings" remote="github" />
+
+  <!-- SONY Vendor Projects -->
+  <project name="AdrianDC/proprietary_vendor_sony" path="vendor/sony" remote="github" />
+
+  <!-- SONY 8960 Huashan Projects -->
+  <project name="AdrianDC/android_device_sony_huashan" path="device/sony/huashan" remote="github" />
+  <project name="AdrianDC/android_kernel_sony_msm8960t" path="kernel/sony/msm8960t" remote="github" />
+
+  <!-- SONY 8960 Blue Projects -->
+  <project name="AdrianDC/android_device_sony_blue-common" path="device/sony/blue-common" remote="github" />
+  <project name="AdrianDC/android_device_sony_hayabusa" path="device/sony/hayabusa" remote="github" />
+  <project name="AdrianDC/android_device_sony_mint" path="device/sony/mint" remote="github" />
+  <project name="AdrianDC/android_device_sony_tsubasa" path="device/sony/tsubasa" remote="github" />
+  <project name="AdrianDC/android_kernel_sony_msm8x60" path="kernel/sony/msm8x60" remote="github" />
+
+</manifest>
