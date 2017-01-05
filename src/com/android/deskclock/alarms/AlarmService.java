@@ -241,7 +241,7 @@ public class AlarmService extends Service {
                     break;
                 }
                 stopCurrentAlarm();
-                stopSelf();
+                stopSelfResult(startId);
         }
 
         return Service.START_NOT_STICKY;
