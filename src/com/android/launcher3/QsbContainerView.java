@@ -108,7 +108,10 @@ public class QsbContainerView extends FrameLayout {
             mWidgetInfo = getSearchWidgetProvider(launcher);
             if (mWidgetInfo == null) {
                 // There is no search provider, just show the default widget.
-                return getDefaultView(inflater, container, false);
+		// and hide it as no action can be performed without provider !
+		View noSearchWidget = getDefaultView(inflater, container, false);
+		noSearchWidget.setVisibility(View.GONE);
+		return noSearchWidget;
             }
 
             SharedPreferences prefs = Utilities.getPrefs(launcher);
